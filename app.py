@@ -193,7 +193,6 @@ def main():
     if explanations:
         # First, display the explanations
         for title, explanation in explanations.items():
-            st.markdown(f"### {title}")
             st.write(explanation)
 
         # Then, show the download button
