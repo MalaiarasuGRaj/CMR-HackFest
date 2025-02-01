@@ -177,7 +177,7 @@ def main():
         structured_content = extract_titles_and_contents(extracted_text)
 
         for title, content in structured_content.items():
-            user_prompt = f"Provide an in-depth study material explanation for: {title}. Ensure it follows a structured format and is detailed."
+            user_prompt = f"Provide an in-depth study material explanation for: {title}. Ensure it follows a structured format and is detailed. Also do day wise split for each topic, like in day 1 this topic can be covered"
             st.session_state.messages.append({"role": "user", "content": user_prompt})
             bot_response = get_chatbot_response(st.session_state.messages, client)
             explanations[title] = bot_response
