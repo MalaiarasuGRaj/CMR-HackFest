@@ -3,3 +3,4 @@ openai
 PyPDF2
 python-docx
 google-api-python-client
+google-generativeai
