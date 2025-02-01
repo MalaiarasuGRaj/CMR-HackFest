@@ -33,7 +33,7 @@ except Exception as e:
 
 # ✅ OpenAI (SambaNova AI) API Key
 try:
-    OPENAI_API_KEY = "e146e13e-46f6-4d38-8b67-a120c374803b"
+    OPENAI_API_KEY = "eaadfe4f-76d2-42e3-b1f0-0d6e8327698b"
     client = openai.OpenAI(
         api_key=OPENAI_API_KEY,
         base_url="https://api.sambanova.ai/v1",
