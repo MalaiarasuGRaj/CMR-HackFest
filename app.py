@@ -8,6 +8,9 @@ from googleapiclient.discovery import build
 import google.generativeai as genai  # Import Gemini API
 from googleapiclient.errors import HttpError
 import os
+import requests
+import io
+from PIL import Image
 
 # ✅ Prevent Google APIs from using default credentials (forces API Key usage)
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -52,6 +55,13 @@ def get_chatbot_response(messages, client):
     except Exception as e:
         return f"Error: {str(e)}"
 
+# ✅ Hugging Face API Key for Image Generation
+API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+HEADERS = {"Authorization": "Bearer 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"}
+
+def query_image(payload):
+    response = requests.post(API_URL, headers=HEADERS, json=payload)
+    return response.content
 
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PyPDF2.PdfReader(uploaded_file)
@@ -127,10 +137,10 @@ def get_study_material_links(topic):
             top_p=0.1,
             max_tokens=4096
         )
-        
+       
         # Extract the response text from SambaNova API
         study_links = response.choices[0].message.content.strip().split("\n")
-        
+       
         # Filter only valid HTTP links (HTTP, HTTPS)
         valid_links = [link.strip() for link in study_links if "http" in link]
 
@@ -149,7 +159,7 @@ def get_study_material_links(topic):
             ]
 
         return open_access_links
-    
+   
     except Exception as e:
         return [f"Error fetching links: {str(e)}"]
 
@@ -165,10 +175,19 @@ def main():
             {"role": "system",
              "content": "You are a detailed and knowledgeable assistant. Provide thorough explanations."}
         ]
-
+    
     st.sidebar.header("Input Fields")
     user_title = st.sidebar.text_input("Enter Title")
     uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
+
+    if user_title:
+     with st.spinner("Generating Thumbnail..."):
+        static_prompt = f"A professional and visually appealing educational graphic for '{user_title}', featuring modern learning materials, books, and technology-driven learning elements."
+        image_bytes = query_image({"inputs": static_prompt})
+        image = Image.open(io.BytesIO(image_bytes))
+        image = image.resize((1280, 720))
+        st.image(image, caption="Generated Thumbnail", use_container_width=True)
+
 
     explanations = {}
 
